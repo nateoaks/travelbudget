@@ -1,0 +1,5 @@
+MySQL-python
+flask
+flask-sqlalchemy
+flask-debugtoolbar
+ipython

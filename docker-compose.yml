@@ -1,0 +1,21 @@
+db:
+  image: mysql:5.6
+  environment:
+    - MYSQL_ROOT_PASSWORD=secret1234
+    - MYSQL_DATABASE=travelbudget
+    - MYSQL_USER=tb
+    - MYSQL_PASSWORD=tbpass
+  ports:
+    - '3306:3306'
+app:
+  build: .
+  command: python travelbudget/app.py
+  volumes:
+    - ./src/travelbudget:/src/travelbudget
+  ports:
+    - '5000:5000'
+  links:
+    - db
+  environment:
+    - ENVIRONMENT=development
+    - PYTHONPATH=/src
