@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Add Expense{% endblock %}
+{% block content %}
+<form class="sm-col-6" method="post" action="{{ url_for('expenses.add', trip_id=trip_id) }}">
+    <label>Date</label>
+    <input type="date" name="date" class="block full-width mb1 field-light" value="{{ today }}">
+
+    <label>Amount</label>
+    <input type="text" name="amount" class="block full-width mb1 field-light">
+
+    <label>Category</label>
+    <select name="category_id" class="block full-width mb1 field-light">
+    {% for cid, category in categories.iteritems() %}
+        <option value="{{ cid }}">{{ category }}</option>
+    {% endfor %}
+    </select>
+
+    <label>Description</label>
+    <input type="text" name="description" class="block full-width mb1 field-light">
+
+    <label>Currency</label>
+    <select name="currency_id" class="block full-width mb1 field-light">
+    {% for cid, currency in currencies.iteritems() %}
+        <option value="{{ cid }}">{{ currency }}</option>
+    {% endfor %}
+    </select>
+
+    <label>Country</label>
+    <select name="country_id" class="block full-width mb1 field-light">
+    {% for cid, country in countries.iteritems() %}
+        <option value="{{ cid }}">{{ country }}</option>
+    {% endfor %}
+    </select>
+
+    <label>Account</label>
+    <select name="account_id" class="block full-width mb1 field-light">
+    {% for aid, account in accounts.iteritems() %}
+        <option value="{{ aid }}">{{ account }}</option>
+    {% endfor %}
+    </select>
+
+    <button type="submit" class="button">Create</button>
+    <button type="reset" class="button bg-gray">Cancel</button>
+
+</form>
+{% endblock %}

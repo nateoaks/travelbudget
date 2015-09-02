@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}View Trips{% endblock %}
+{% block content %}
+<div class="overflow-scroll">
+    <table class="table-light">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for trip in trips %}
+        <tr>
+            <td><a href="/trips/{{ trip.id }}/">{{ trip.id }}</a></td>
+            <td>{{ trip.name }}</td>
+            <td>{{ trip.start_date }}</td>
+            <td>{{ trip.end_date }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% for cid, c in trips[0].cash.iteritems() %}
+{{ cid }}:  {{ c }}<br />
+{% endfor %}
+{% endblock %}

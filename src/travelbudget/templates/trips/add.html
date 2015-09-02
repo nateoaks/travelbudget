@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Add Trip{% endblock %}
+{% block content %}
+<form class="sm-col-6" method="post" action="{{ url_for('trips.add') }}">
+    <label>Name</label>
+    <input type="string" name="name" class="block full-width mb1 field-light">
+
+    <label>Start Date</label>
+    <input type="date" name="start_date" class="block full-width mb1 field-light">
+
+    <label>End Date</label>
+    <input type="date" name="end_date" class="block full-width mb1 field-light">
+
+    <label>Home Currency</label>
+    <select name="currency_id" class="block full-width mb1 field-light">
+    {% for cid, currency in currencies.iteritems() %}
+        <option value="{{ cid }}">{{ currency }}</option>
+    {% endfor %}
+    </select>
+
+    <!--<label>Countries</label>-->
+    <!--<input type="string" name="country1" class="block full-width mb1 field-light">-->
+
+    <button type="submit" class="button">Create</button>
+    <button type="reset" class="button bg-gray">Cancel</button>
+
+</form>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Add Income{% endblock %}
+{% block content %}
+<form class="sm-col-6" method="post" action="{{ url_for('exchanges.add', trip_id=trip_id) }}">
+    <label>Date</label>
+    <input type="date" name="date" class="block full-width mb1 field-light" value="{{ today }}">
+
+    <label>Income Amount</label>
+    <input type="text" name="income_amount" class="block full-width mb1 field-light">
+
+    <label>Income Currency</label>
+    <select name="income_currency_id" class="block full-width mb1 field-light">
+    {% for cid, currency in currencies.iteritems() %}
+        <option value="{{ cid }}">{{ currency }}</option>
+    {% endfor %}
+    </select>
+
+    <label>Expense Amount</label>
+    <input type="text" name="expense_amount" class="block full-width mb1 field-light">
+
+    <label>Expense Currency</label>
+    <select name="expense_currency_id" class="block full-width mb1 field-light">
+    {% for cid, currency in currencies.iteritems() %}
+        <option value="{{ cid }}">{{ currency }}</option>
+    {% endfor %}
+    </select>
+
+    <label>Expense Account</label>
+    <select name="expense_account_id" class="block full-width mb1 field-light">
+    {% for aid, account in accounts.iteritems() %}
+        <option value="{{ aid }}">{{ account }}</option>
+    {% endfor %}
+    </select>
+
+    <label>Expense Fee</label>
+    <input type="text" name="expense_fee" class="block full-width mb1 field-light">
+
+    <button type="submit" class="button">Create</button>
+    <button type="reset" class="button bg-gray">Cancel</button>
+
+    <input type="hidden" name="income_account_id" value="1" />
+</form>
+{% endblock %}

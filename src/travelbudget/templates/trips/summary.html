@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Trip Summary{% endblock %}
+{% block content %}
+<div class="overflow-scroll">
+    <table class="table-light">
+        <thead>
+        <tr>
+            <th>Category ID</th>
+            <th>Category</th>
+            <th>Total Expenses</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for expense in category_expenses.values() %}
+            <tr>
+                <td>{{ expense.category_id }}</td>
+                <td>{{ expense.category }}</td>
+                <td>{{ expense.amount }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div>
+    <b>Daily Budget Remaining</b>: ${{ daily_budget_remaining|round(2) }}
+</div>
+{% endblock %}

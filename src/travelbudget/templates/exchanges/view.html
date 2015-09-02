@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}View Incomes{% endblock %}
+{% block content %}
+<div class="overflow-scroll">
+    <table class="table-light">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Date</th>
+            <th>Trip</th>
+            <th>Income</th>
+            <th>Expense</th>
+            <th>Expense Fee</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for exchange in exchanges %}
+        <tr>
+            <td>{{ exchange.id }}</td>
+            <td>{{ exchange.exchange_date }}</td>
+            <td>{{ exchange.trip.name }}</td>
+            <td>{{ exchange.income_amount|format_currency(exchange.income_currency) }} ({{ exchange.income_currency.iso_code }})</td>
+            <td>{{ exchange.expense_amount|format_currency(exchange.expense_currency) }} ({{ exchange.expense_currency.iso_code }})</td>
+            <td>{{ exchange.expense_fee|format_currency(exchange.expense_currency) }} ({{ exchange.expense_currency.iso_code }})</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
