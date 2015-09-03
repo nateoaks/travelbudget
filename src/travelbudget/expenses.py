@@ -42,7 +42,8 @@ def add(trip_id):
                                                                  flask.request.form['currency_id'])
         for res in results:
             preferred_currency_amount += res['preferred_currency_amount']
-            db_session.add(res['money_exchange'])
+            if res['money_exchange']:
+                db_session.add(res['money_exchange'])
 
         expense = Expense(
             trip_id=trip_id,

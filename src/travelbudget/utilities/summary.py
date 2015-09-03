@@ -76,6 +76,20 @@ def get_cash_expense_in_preferred_currency(trip_id, amount, currency_id):
         if amount_from_cur_exchange == 0:
             break
 
+    if cur_amount > 0:
+        trip = Trip.query.get(trip_id)
+        if currency_id == trip.preferred_currency_id:
+            results.append({'amount': cur_amount,
+                            'money_exchange': None,
+                            'preferred_currency_amount': cur_amount})
+        else:
+            daily_currency = DailyCurrency.query.filter_by(currency_id=currency_id,
+                                                           current=1)[0]
+            preferred_currency_amount = cur_amount / Decimal(daily_currency.conversion_rate)
+            results.append({'amount': cur_amount,
+                            'money_exchange': None,
+                            'preferred_currency_amount': preferred_currency_amount})
+
     return results
 
 def total_spent_by(trip_id, group_by):
@@ -105,17 +119,23 @@ def total_spent_by_country(trip_id):
     return countries
 
 
-def total_spent(trip_id):
-    return db_session.query(func.sum(Expense.amount)).\
+def total_trip_budget(trip_id):
+    trip = Trip.query.get(trip_id)
+    total_trip_days = (trip.end_date - trip.start_date).days
+    trip_budget = trip.trip_budget or trip.daily_budget * total_trip_days
+    return trip_budget
+
+
+def total_spent_trip(trip_id):
+    return db_session.query(func.sum(Expense.preferred_currency_amount)).\
         filter_by(trip_id=trip_id)[0][0]
 
 def current_daily_budget(trip_id):
     trip = Trip.query.get(trip_id)
     total_trip_days = (trip.end_date - trip.start_date).days
-    trip_budget = trip.trip_budget or trip.daily_budget * total_trip_days
     trip_days_passed = (min(trip.end_date, datetime.date.today()) - trip.start_date).days
 
-    total_budget_left = trip_budget - total_spent(trip_id)
+    total_budget_left = total_trip_budget(trip_id) - total_spent_trip(trip_id)
     return total_budget_left / (total_trip_days - trip_days_passed)
 
 

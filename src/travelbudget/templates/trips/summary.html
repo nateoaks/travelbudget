@@ -1,6 +1,12 @@
 {% extends "base.html" %}
 {% block title %}Trip Summary{% endblock %}
 {% block content %}
+<div>
+    <b>Total Trip Budget</b>: ${{ total_trip_budget }}<br />
+    <b>Total Spent</b>: ${{ total_spent_trip }}<br />
+    <b>Daily Budget Remaining</b>: ${{ daily_budget_remaining|round(2) }}<br />
+</div>
+
 <div class="overflow-scroll">
     <table class="table-light">
         <thead>
@@ -20,9 +26,5 @@
         {% endfor %}
         </tbody>
     </table>
-</div>
-
-<div>
-    <b>Daily Budget Remaining</b>: ${{ daily_budget_remaining|round(2) }}
 </div>
 {% endblock %}

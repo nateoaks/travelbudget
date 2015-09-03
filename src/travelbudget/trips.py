@@ -53,7 +53,11 @@ def add():
 def trip_summary(trip_id):
     category_expenses = summary.total_spent_by_category(trip_id, add_category_name=True)
     daily_budget_remaining = summary.current_daily_budget(trip_id)
+    total_spent_trip = summary.total_spent_trip(trip_id)
+    total_trip_budget = summary.total_trip_budget(trip_id)
     return flask.render_template('trips/summary.html',
                                  category_expenses=category_expenses,
-                                 daily_budget_remaining=daily_budget_remaining)
+                                 daily_budget_remaining=daily_budget_remaining,
+                                 total_spent_trip=total_spent_trip,
+                                 total_trip_budget=total_trip_budget)
 
