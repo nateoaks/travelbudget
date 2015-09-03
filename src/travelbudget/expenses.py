@@ -1,9 +1,10 @@
 from flask import current_app
 from travelbudget.database import db_session
 from travelbudget.models import Account, Category, DailyCurrency, Expense, Trip
-from travelbudget.utilities import summary
+from travelbudget.utilities import summary, json_
 import flask
 import datetime
+import json
 
 DAILY_CURRENCY_ID = 1
 USER_ID = 1
@@ -40,10 +41,20 @@ def add(trip_id):
         results = summary.get_cash_expense_in_preferred_currency(trip_id,
                                                                  flask.request.form['amount'],
                                                                  flask.request.form['currency_id'])
+
+        expense_notes = []
         for res in results:
             preferred_currency_amount += res['preferred_currency_amount']
+            note = {
+                'amount': res['amount'],
+                'preferred_currency_amount': res['preferred_currency_amount'],
+                'money_exchange_id': None
+            }
             if res['money_exchange']:
                 db_session.add(res['money_exchange'])
+                note['money_exchange_id'] = res['money_exchange'].id
+            expense_notes.append(note)
+
 
         expense = Expense(
             trip_id=trip_id,
@@ -56,6 +67,7 @@ def add(trip_id):
             category_id=flask.request.form['category_id'],
             country_id=flask.request.form['country_id'],
             description=flask.request.form['description'],
+            notes=json.dumps(expense_notes, cls=json_.ExpenseEncoder),
             created=datetime.datetime.now()
         )
 

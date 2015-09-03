@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, Float, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, Float, ForeignKey, Text
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.schema import Table
 from travelbudget.database import Base
@@ -65,6 +65,7 @@ class Expense(Base):
     parent_expense_id = Column(Integer)
     description = Column(String(255))
     days_spread = Column(Integer)
+    notes = Column(Text)
     created = Column(DateTime)
 
     trip = relationship('Trip', backref='expenses')
@@ -75,7 +76,7 @@ class Expense(Base):
     def __init__(self, trip_id=None, expense_date=None, amount=None, preferred_currency_amount=None,
                  currency_id=None, daily_currency_id=None, country_id=None, account_id=None,
                  category_id=None, description=None, days_spread=None, parent_expense_id=None,
-                 created=None):
+                 notes=None, created=None):
         self.trip_id = trip_id
         self.expense_date = expense_date
         self.amount = amount
@@ -88,6 +89,7 @@ class Expense(Base):
         self.description = description
         self.days_spread = days_spread
         self.parent_expense_id = parent_expense_id
+        self.notes = notes
         self.created = created
 
     def __repr__(self):
