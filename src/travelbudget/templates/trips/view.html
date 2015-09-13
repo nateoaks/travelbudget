@@ -14,7 +14,7 @@
         <tbody>
         {% for trip in trips %}
         <tr>
-            <td><a href="/trips/{{ trip.id }}/">{{ trip.id }}</a></td>
+            <td><a href="/trips/summary/trip-{{ trip.id }}/">{{ trip.id }}</a></td>
             <td>{{ trip.name }}</td>
             <td>{{ trip.start_date }}</td>
             <td>{{ trip.end_date }}</td>
@@ -23,8 +23,4 @@
         </tbody>
     </table>
 </div>
-
-{% for cid, c in trips[0].cash.iteritems() %}
-{{ cid }}:  {{ c }}<br />
-{% endfor %}
 {% endblock %}

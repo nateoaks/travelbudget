@@ -1,30 +1,46 @@
 {% extends "base.html" %}
 {% block title %}Trip Summary{% endblock %}
 {% block content %}
-<div>
-    <b>Total Trip Budget</b>: ${{ total_trip_budget }}<br />
-    <b>Total Spent</b>: ${{ total_spent_trip }}<br />
-    <b>Daily Budget Remaining</b>: ${{ daily_budget_remaining|round(2) }}<br />
+<div id="trip-summary">
+    <h1>{{ trip.name }}</h1>
+    <h2>{{ trip.start_date }} - {{ trip.end_date }}</h2>
+    <div>
+        <b>Daily Budget Remaining</b>: {{ daily_budget_remaining|round(2)|format_currency(currency) }}<br />
+        <b>Total Trip Budget</b>: {{ total_trip_budget|format_currency(currency) }}<br />
+        <b>Total Spent</b>: {{ total_spent_trip|format_currency(currency) }} (<a href="/expenses/daily/trip-{{ trip.id }}/">view</a>)<br />
+    </div>
+
+    <div id="summary-nav">
+        <ul>
+            <li><a href="/expenses/add/trip-{{ trip.id }}/">Add Expense</a></li>
+        </ul>
+    </div>
+
+    <div id="summary-expenses" style="width:400px;">
+        <div class="flex center">
+            <a href="#!" class="flex-auto btn btn-primary rounded-left is-active expense-list" id="expense-list-category">Category</a>
+            <a href="#!" class="flex-auto btn btn-primary border-left not-rounded expense-list" id="expense-list-date">Date</a>
+            <a href="#!" class="flex-auto btn btn-primary border-left rounded-right expense-list" id="expense-list-country">Country</a>
+        </div>
+
+        <div id="summary-expense-list">
+            {{ expense_list_html|safe }}
+        </div>
+    </div>
+
 </div>
 
-<div class="overflow-scroll">
-    <table class="table-light">
-        <thead>
-        <tr>
-            <th>Category ID</th>
-            <th>Category</th>
-            <th>Total Expenses</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for expense in category_expenses.values() %}
-            <tr>
-                <td>{{ expense.category_id }}</td>
-                <td>{{ expense.category }}</td>
-                <td>{{ expense.amount }}</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-</div>
+<script>
+$(document).ready(function() {
+    $('.expense-list').click(function() {
+        var group_type = $(this).attr('id').replace('expense-list-','');
+        var response = $.getJSON(
+            "/trips/summary/json/trip-{{ trip.id }}/group-" + group_type + "/",
+            function(data) {
+                $('#summary-expense-list').html(data.expense_list_html);
+            }
+        );
+    });
+});
+</script>
 {% endblock %}

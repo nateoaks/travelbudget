@@ -1,9 +1,10 @@
-from travelbudget.models import Category, Currency, DailyCurrency, Expense, MoneyExchange, Trip
+from travelbudget.models import Category, Country, Currency, DailyCurrency, Expense, MoneyExchange, Trip
 from travelbudget.database import db_session
 from sqlalchemy import func
 from decimal import Decimal
 import collections
 import datetime
+import flask
 
 CASH_ACCOUNT_ID = 1
 
@@ -96,27 +97,63 @@ def total_spent_by(trip_id, group_by):
     """
     Return total spent for trip in dict indexed by {group_by}
     """
-    expenses = db_session.query(Expense.category_id,
+    expenses = db_session.query(getattr(Expense, group_by),
                                 func.sum(Expense.preferred_currency_amount)).\
         filter_by(trip_id=trip_id).\
         group_by(getattr(Expense, group_by))
     return expenses
 
-def total_spent_by_category(trip_id, add_category_name=False):
+def total_spent_by_category(trip_id, add_name=False):
     category_expenses = total_spent_by(trip_id, 'category_id')
     expenses = {e[0]: {'category_id': e[0], 'amount': e[1]} for e in category_expenses}
 
-    if add_category_name:
+    if add_name:
         categories = Category.query.filter(Category.id.in_(expenses.keys()))
         for c in categories:
-            expenses[c.id]['category'] = c.category_name
-
+            expenses[c.id]['name'] = c.category_name
     return expenses
 
-def total_spent_by_country(trip_id):
+def total_spent_by_country(trip_id, add_name=False):
     country_expenses = total_spent_by(trip_id, 'country_id')
-    countries = {e[0]: e[1] for e in country_expenses}
-    return countries
+    expenses = {e[0]: {'country_id': e[0], 'amount': e[1]} for e in country_expenses}
+
+    if add_name:
+        countries = Country.query.filter(Country.id.in_(expenses.keys()))
+        for c in countries:
+            expenses[c.id]['name'] = c.country_name
+    return expenses
+
+def total_spent_by_date(trip_id, add_name=True):
+    daily_expenses = total_spent_by(trip_id, 'expense_date')
+    daily = {e[0]: {'name': e[0], 'amount': e[1]} for e in daily_expenses}
+    return daily
+
+
+def get_expense_summary_html(trip_id, group_type, currency):
+
+    category_map = {
+        'category': {
+            'label': 'Category',
+            'function': total_spent_by_category
+        },
+        'date': {
+            'label': 'Date',
+            'function': total_spent_by_date
+        },
+        'country': {
+            'label': 'Country',
+            'function': total_spent_by_country
+        }
+    }
+
+    expenses = category_map[group_type]['function'](trip_id, add_name=True).values()
+    expenses.sort(key=lambda expense:expense['name'])
+    expense_list_html = flask.render_template('summary/expense_list.html',
+                                              expenses=expenses,
+                                              label=category_map[group_type]['label'],
+                                              currency=currency)
+
+    return expense_list_html
 
 
 def total_trip_budget(trip_id):
@@ -137,7 +174,6 @@ def current_daily_budget(trip_id):
 
     total_budget_left = total_trip_budget(trip_id) - total_spent_trip(trip_id)
     return total_budget_left / (total_trip_days - trip_days_passed)
-
 
 
 

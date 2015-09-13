@@ -1,7 +1,7 @@
 from flask import current_app
 from travelbudget.database import db_session
 from travelbudget.models import Currency, Trip
-from travelbudget.utilities import summary
+from travelbudget.utilities import summary, currency as currencyutil
 import flask
 
 USER_ID = 1
@@ -49,15 +49,27 @@ def add():
                                  currencies=currencies,
                                  trip=trip)
 
-@trips_bp.route('/summary/<int:trip_id>/')
+@trips_bp.route('/summary/trip-<int:trip_id>/')
 def trip_summary(trip_id):
-    category_expenses = summary.total_spent_by_category(trip_id, add_category_name=True)
+    trip = Trip.query.get(trip_id)
+
     daily_budget_remaining = summary.current_daily_budget(trip_id)
     total_spent_trip = summary.total_spent_trip(trip_id)
     total_trip_budget = summary.total_trip_budget(trip_id)
+
+    currency = currencyutil.currencies[trip.preferred_currency_id]
+    expense_list_html = summary.get_expense_summary_html(trip_id, 'category', currency)
     return flask.render_template('trips/summary.html',
-                                 category_expenses=category_expenses,
+                                 trip=trip,
+                                 currency=currency,
+                                 expense_list_html=expense_list_html,
                                  daily_budget_remaining=daily_budget_remaining,
                                  total_spent_trip=total_spent_trip,
                                  total_trip_budget=total_trip_budget)
 
+@trips_bp.route('/summary/json/trip-<int:trip_id>/group-<string:group_type>/')
+def get_expense_summary(trip_id, group_type):
+    trip = Trip.query.get(trip_id)
+    currency = currencyutil.currencies[trip.preferred_currency_id]
+    expense_list_html = summary.get_expense_summary_html(trip_id, group_type, currency)
+    return flask.jsonify(expense_list_html=expense_list_html)

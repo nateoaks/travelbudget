@@ -91,3 +91,15 @@ def add(trip_id):
                                  currencies=currencies,
                                  expense=expense,
                                  today=today)
+
+@expenses_bp.route('/daily/trip-<int:trip_id>/')
+def daily(trip_id):
+
+    daily_expenses = summary.total_spent_by_date(trip_id).values()
+    daily_expenses.sort(key=lambda expense: expense['name'], reverse=True)
+    expense_list_html = flask.render_template('summary/expense_list.html',
+                                              expenses=daily_expenses,
+                                              label='Date')
+
+    return flask.render_template('expenses/daily_summary.html',
+                                 expense_list_html=expense_list_html)

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}TravelBudget Home{% endblock %}
+{% block content %}
+
+{% if current_trips %}
+<h1>Current Trips</h1>
+<div class="overflow-scroll">
+    <table class="table-light">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for trip in current_trips %}
+        <tr>
+            <td><a href="/trips/summary/trip-{{ trip.id }}/">{{ trip.id }}</a></td>
+            <td>{{ trip.name }}</td>
+            <td>{{ trip.start_date }}</td>
+            <td>{{ trip.end_date }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+{% if future_trips %}
+<h1>Future Trips</h1>
+<div class="overflow-scroll">
+    <table class="table-light">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for trip in future_trips %}
+        <tr>
+            <td><a href="/trips/summary/trip-{{ trip.id }}/">{{ trip.id }}</a></td>
+            <td>{{ trip.name }}</td>
+            <td>{{ trip.start_date }}</td>
+            <td>{{ trip.end_date }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+<a href="/trips/">All Trips</a>
+{% endblock %}
